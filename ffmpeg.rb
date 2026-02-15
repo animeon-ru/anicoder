@@ -7,14 +7,14 @@ require 'aws-sdk-s3'
 require 'dotenv'
 require 'logger'
 
-file = File.open('/home/devops/transcoder.log', File::WRONLY | File::APPEND | File::CREAT)
+file = File.open('/home/devops/anicoder/logs/transcoder.log', File::WRONLY | File::APPEND | File::CREAT)
 file.sync = true
 $stdout = file
 $stderr = file
 LOGGER = Logger.new(file, 'weekly')
 LOGGER.level = Logger::DEBUG
 
-Dotenv.load('/home/devops/animeon/.env')
+Dotenv.load('/home/devops/anicoder/.env')
 Aws.config.update(
   credentials: Aws::Credentials.new(ENV['ACCESS_KEY_ID'], ENV['SECRET_ACCESS_KEY']),
   region: ENV['S3_REGION'],
@@ -60,7 +60,7 @@ def main()
         REDIS.set("transcoder:status", "transcoding")
         REDIS.set("transcoder:current_time_start", Time.now.to_s)
         time_start = Time.now
-        system("sh /home/devops/transcode -i #{id} -f #{format.to_s.gsub('.', '')}")
+        system("sh /home/devops/anicoder/transcode -i #{id} -f #{format.to_s.gsub('.', '')}")
         time_end = (Time.now - time_start).round(0)
         LOGGER.debug("Successfully transcoded video with id = #{id}")
         LOGGER.debug("Starting to uploading video with id = #{id}")
