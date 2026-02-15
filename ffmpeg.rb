@@ -66,6 +66,9 @@ def main()
         LOGGER.debug("Starting to uploading video with id = #{id}")
         system("aws s3 cp --recursive /transcoding/#{id} s3://video/#{id}")
         LOGGER.debug("Successfully uploaded video with id = #{id}")
+        LOGGER.debug("Deleting video folder from server with id = #{id}")
+        system("rm -r /transcoding/#{id}")
+        LOGGER.debug("Successfully deleted video folder from server with id = #{id}")
         REDIS.set("transcoder:video:#{REDIS.get("transcoder:videos_all_time")}:time",
                   time_end.to_s)
         REDIS.set("transcoder:video:#{REDIS.get("transcoder:videos_all_time")}:id",
